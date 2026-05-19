@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UP Robotics — AI-Powered Enrollment | Omnify</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6C5CE7; --primary-light: #A29BFE; --primary-dark: #4834D4;
+      --accent: #00CEC9; --accent-light: #81ECEC;
+      --warm: #FDCB6E; --warm-dark: #F39C12;
+      --coral: #FF7675; --success: #00B894;
+      --bg: #0F0F1A; --bg-card: #1A1A2E; --bg-card-hover: #222240;
+      --surface: #16162A; --text: #E8E8F0; --text-muted: #8888A8; --text-dim: #5A5A7A;
+      --border: #2A2A4A;
+      --gradient-1: linear-gradient(135deg, #6C5CE7 0%, #00CEC9 100%);
+      --gradient-2: linear-gradient(135deg, #FDCB6E 0%, #FF7675 100%);
+      --gradient-3: linear-gradient(135deg, #A29BFE 0%, #81ECEC 100%);
+      --shadow: 0 8px 32px rgba(0,0,0,0.3); --radius: 16px; --radius-sm: 10px; --radius-lg: 24px;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+
+    .nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(15,15,26,0.9); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .nav-left { display:flex; align-items:center; gap:24px; }
+    .nav-logo { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; background:var(--gradient-1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; display:flex; align-items:center; gap:8px; }
+    .nav-logo svg { width:24px; height:24px; }
+    .nav-tabs { display:flex; gap:4px; }
+    .nav-tab { padding:8px 14px; border-radius:8px; font-size:13px; font-weight:500; color:var(--text-muted); cursor:pointer; transition:all 0.2s; border:none; background:none; }
+    .nav-tab:hover { color:var(--text); background:var(--bg-card); }
+    .nav-tab.active { color:var(--text); background:var(--bg-card); }
+    .nav-right { display:flex; align-items:center; gap:12px; }
+    .cart-btn { position:relative; padding:8px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text); cursor:pointer; font-size:13px; display:flex; align-items:center; gap:6px; }
+    .cart-count { background:var(--accent); color:#000; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+
+    .screen { display:none; min-height:100vh; padding:72px 0 60px; }
+    .screen.active { display:block; }
+    .container { max-width:1280px; margin:0 auto; padding:0 24px; }
+
+    /* Discovery */
+    .discovery-hero { text-align:center; padding:48px 0 40px; position:relative; }
+    .discovery-hero .glow { position:absolute; width:500px; height:500px; border-radius:50%; background:radial-gradient(circle,rgba(108,92,231,0.12) 0%,transparent 70%); top:-200px; left:50%; transform:translateX(-50%); pointer-events:none; }
+    .ai-badge { display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); padding:6px 14px; border-radius:20px; font-size:12px; color:var(--accent); margin-bottom:20px; }
+    .ai-badge .dot { width:6px; height:6px; background:var(--accent); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+    @keyframes spin { to{transform:rotate(360deg);} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes typing { 0%{opacity:0.3;} 50%{opacity:1;} 100%{opacity:0.3;} }
+    .hero-title { font-family:'Space Grotesk',sans-serif; font-size:44px; font-weight:700; line-height:1.1; margin-bottom:12px; }
+    .hero-title .gradient { background:var(--gradient-1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero-sub { font-size:16px; color:var(--text-muted); max-width:520px; margin:0 auto; }
+    .ai-input-wrap { max-width:680px; margin:32px auto 0; position:relative; }
+    .ai-input { width:100%; padding:18px 120px 18px 48px; background:var(--bg-card); border:2px solid var(--border); border-radius:18px; font-size:15px; color:var(--text); font-family:'Inter',sans-serif; outline:none; transition:all 0.3s; }
+    .ai-input:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(108,92,231,0.12); }
+    .ai-input::placeholder { color:var(--text-dim); }
+    .ai-input-icon { position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--primary-light); }
+    .ai-go-btn { position:absolute; right:6px; top:50%; transform:translateY(-50%); background:var(--gradient-1); border:none; padding:10px 20px; border-radius:14px; color:white; font-weight:600; font-size:14px; cursor:pointer; transition:all 0.2s; }
+    .ai-go-btn:hover { opacity:0.9; }
+    .quick-chips { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:16px; }
+    .chip { padding:8px 14px; background:var(--surface); border:1px solid var(--border); border-radius:16px; font-size:12px; color:var(--text-muted); cursor:pointer; transition:all 0.2s; }
+    .chip:hover { border-color:var(--primary); color:var(--primary-light); }
+
+    /* Profiles */
+    .profiles-section { margin-top:48px; }
+    .section-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .section-title { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600; }
+    .section-action { color:var(--primary-light); font-size:13px; cursor:pointer; background:none; border:none; }
+    .profiles-row { display:flex; gap:14px; overflow-x:auto; padding-bottom:8px; }
+    .profile-card { min-width:220px; background:var(--bg-card); border:2px solid var(--border); border-radius:var(--radius); padding:18px; cursor:pointer; transition:all 0.2s; position:relative; }
+    .profile-card:hover { border-color:var(--primary); }
+    .profile-card.active { border-color:var(--accent); background:linear-gradient(135deg,var(--bg-card) 0%,rgba(0,206,201,0.06) 100%); }
+    .profile-emoji { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:12px; }
+    .profile-name { font-weight:600; font-size:16px; margin-bottom:2px; }
+    .profile-grade { font-size:13px; color:var(--text-muted); margin-bottom:10px; }
+    .profile-tags { display:flex; gap:4px; flex-wrap:wrap; }
+    .tag { padding:3px 8px; background:var(--surface); border-radius:8px; font-size:11px; color:var(--text-muted); }
+    .profile-check { position:absolute; top:12px; right:12px; width:20px; height:20px; border-radius:50%; border:2px solid var(--border); display:flex; align-items:center; justify-content:center; }
+    .profile-card.active .profile-check { background:var(--accent); border-color:var(--accent); }
+
+    /* AI Reasoning */
+    .ai-reasoning { background:linear-gradient(135deg,rgba(108,92,231,0.08) 0%,rgba(0,206,201,0.08) 100%); border:1px solid rgba(108,92,231,0.2); border-radius:var(--radius); padding:16px 20px; margin:32px 0 24px; display:flex; gap:12px; align-items:flex-start; animation:fadeInUp 0.3s ease; }
+    .ai-reasoning-icon { width:36px; height:36px; background:var(--gradient-1); border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .ai-reasoning-text { font-size:14px; line-height:1.7; }
+    .ai-reasoning-text strong { color:var(--primary-light); }
+    .ai-loading { display:flex; align-items:center; gap:8px; padding:16px 20px; }
+    .ai-loading .dots span { width:6px; height:6px; background:var(--primary-light); border-radius:50%; display:inline-block; animation:typing 1.4s infinite; }
+    .ai-loading .dots span:nth-child(2) { animation-delay:0.2s; }
+    .ai-loading .dots span:nth-child(3) { animation-delay:0.4s; }
+    .ai-reasons-list { margin-top:12px; padding-left:0; list-style:none; }
+    .ai-reasons-list li { font-size:13px; padding:4px 0; display:flex; align-items:center; gap:8px; color:var(--text-muted); }
+    .ai-reasons-list li::before { content:'✓'; color:var(--accent); font-weight:700; font-size:12px; }
+    .ai-top-picks { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+    .ai-pick-chip { padding:6px 12px; background:rgba(0,206,201,0.1); border:1px solid rgba(0,206,201,0.2); border-radius:8px; font-size:12px; color:var(--accent); cursor:pointer; transition:all 0.2s; }
+    .ai-pick-chip:hover { background:rgba(0,206,201,0.2); }
+
+    /* Filter Bar */
+    .filter-bar { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; align-items:center; }
+    .filter-label { font-size:13px; color:var(--text-muted); margin-right:4px; }
+    .filter-btn { padding:6px 12px; background:var(--surface); border:1px solid var(--border); border-radius:8px; font-size:12px; color:var(--text-muted); cursor:pointer; transition:all 0.2s; }
+    .filter-btn:hover { border-color:var(--primary); color:var(--text); }
+    .filter-btn.active { background:var(--primary); border-color:var(--primary); color:white; }
+    .results-count { margin-left:auto; font-size:13px; color:var(--text-dim); }
+
+    /* Services Grid */
+    .services-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; }
+    .service-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:all 0.2s; cursor:pointer; }
+    .service-card:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow); }
+    .service-header { padding:18px 18px 0; display:flex; align-items:flex-start; justify-content:space-between; }
+    .service-type { font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:600; padding:4px 8px; border-radius:6px; }
+    .type-camp { background:rgba(253,203,110,0.15); color:var(--warm); }
+    .type-program { background:rgba(108,92,231,0.15); color:var(--primary-light); }
+    .type-party { background:rgba(255,118,117,0.15); color:var(--coral); }
+    .match-badge { font-size:12px; font-weight:700; padding:4px 10px; border-radius:12px; background:rgba(0,206,201,0.15); color:var(--accent); }
+    .service-body { padding:14px 18px; }
+    .service-name { font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600; margin-bottom:10px; line-height:1.3; }
+    .service-details { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .detail-row { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-muted); }
+    .detail-row .icon { width:16px; text-align:center; }
+    .service-footer { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-top:1px solid var(--border); }
+    .service-price { font-size:20px; font-weight:700; color:var(--accent); }
+    .service-price .period { font-size:12px; color:var(--text-muted); font-weight:400; }
+    .add-btn { padding:8px 16px; background:var(--primary); border:none; border-radius:8px; color:white; font-weight:600; font-size:13px; cursor:pointer; transition:all 0.2s; }
+    .add-btn:hover { background:var(--primary-dark); }
+    .add-btn.added { background:var(--success); }
+
+    /* Registration */
+    .reg-header { padding:32px 0 24px; }
+    .reg-title { font-family:'Space Grotesk',sans-serif; font-size:28px; font-weight:700; margin-bottom:8px; }
+    .reg-sub { color:var(--text-muted); font-size:14px; }
+    .reg-layout { display:grid; grid-template-columns:1fr 360px; gap:32px; }
+    .progress-wrap { margin-bottom:32px; }
+    .step-labels { display:flex; justify-content:space-between; margin-bottom:8px; }
+    .step-label { font-size:12px; color:var(--text-dim); }
+    .step-label.active { color:var(--text); font-weight:500; }
+    .step-bar { display:flex; gap:4px; }
+    .step-seg { flex:1; height:4px; background:var(--border); border-radius:2px; }
+    .step-seg.done { background:var(--accent); }
+    .step-seg.current { background:var(--gradient-1); }
+
+    .cart-item-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:16px; }
+    .cart-item-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+    .cart-item-title { font-size:16px; font-weight:600; }
+    .cart-item-profile { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; background:var(--surface); border-radius:8px; font-size:12px; margin-top:6px; }
+    .cart-item-profile .dot { width:8px; height:8px; border-radius:50%; }
+    .cart-item-price-tag { font-size:20px; font-weight:700; color:var(--accent); }
+
+    .schedule-section { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+    .schedule-section h4 { font-size:14px; font-weight:600; margin-bottom:10px; color:var(--primary-light); }
+    .schedule-dates { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:12px; }
+    .schedule-date-chip { padding:10px 14px; background:var(--surface); border:2px solid var(--border); border-radius:10px; min-width:130px; cursor:pointer; transition:all 0.2s; flex-shrink:0; }
+    .schedule-date-chip:hover { border-color:var(--primary); }
+    .schedule-date-chip.selected { border-color:var(--accent); background:rgba(0,206,201,0.08); }
+    .schedule-date-chip .dates { font-size:13px; font-weight:600; margin-bottom:2px; }
+    .schedule-date-chip .price { font-size:12px; color:var(--text-muted); }
+    .schedule-date-chip.out { opacity:0.4; pointer-events:none; }
+    .schedule-times { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+    .schedule-time-chip { padding:12px; background:var(--surface); border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; }
+    .schedule-time-chip:hover { border-color:var(--primary); }
+    .schedule-time-chip.selected { border-color:var(--accent); background:rgba(0,206,201,0.08); }
+    .schedule-time-chip .time { font-size:14px; font-weight:600; margin-bottom:2px; }
+    .schedule-time-chip .day { font-size:12px; color:var(--text-muted); }
+    .schedule-time-chip .spots { font-size:11px; color:var(--success); margin-top:4px; }
+    .schedule-time-chip.out { opacity:0.4; pointer-events:none; }
+
+    .child-assign-row { display:flex; align-items:center; gap:8px; margin-top:12px; padding:10px; background:var(--surface); border-radius:10px; }
+    .child-assign-row .emoji { font-size:18px; }
+    .child-assign-row .name { font-size:13px; font-weight:500; flex:1; }
+    .child-assign-select { padding:6px 10px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text); font-size:12px; font-family:'Inter',sans-serif; outline:none; }
+
+    .sibling-block { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:24px; }
+    .sibling-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .sibling-icon { width:36px; height:36px; background:var(--gradient-2); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+    .sibling-text h4 { font-size:15px; font-weight:600; }
+    .sibling-text p { font-size:12px; color:var(--text-muted); }
+    .sibling-enroll-section { margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+    .sibling-enroll-section h4 { font-size:14px; font-weight:600; margin-bottom:10px; color:var(--warm); }
+    .sibling-child-row { display:flex; align-items:center; gap:10px; padding:10px; background:var(--surface); border-radius:10px; margin-bottom:8px; }
+    .sibling-child-row .emoji { font-size:20px; }
+    .sibling-child-row .info { flex:1; }
+    .sibling-child-row .info .name { font-size:14px; font-weight:500; }
+    .sibling-child-row .info .grade { font-size:12px; color:var(--text-muted); }
+    .sibling-child-row .status { font-size:12px; padding:4px 10px; border-radius:6px; }
+    .sibling-child-row .status.enrolled { background:rgba(0,184,148,0.15); color:var(--success); }
+    .sibling-child-row .status.pending { background:rgba(253,203,110,0.15); color:var(--warm); }
+
+    .sidebar { position:sticky; top:88px; height:fit-content; }
+    .cart-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+    .cart-title { font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600; margin-bottom:16px; }
+    .cart-item { padding:10px 0; border-bottom:1px solid var(--border); }
+    .cart-item-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+    .cart-item-name { font-size:14px; font-weight:500; }
+    .cart-item-price { font-size:14px; font-weight:600; color:var(--accent); }
+    .cart-item-detail { font-size:12px; color:var(--text-muted); }
+    .cart-remove { background:none; border:none; color:var(--coral); font-size:12px; cursor:pointer; padding:0; margin-top:4px; }
+    .discount-row { background:linear-gradient(135deg,rgba(253,203,110,0.1) 0%,rgba(255,118,117,0.1) 100%); border:1px solid rgba(253,203,110,0.2); border-radius:8px; padding:10px 12px; margin:12px 0; display:flex; align-items:center; gap:8px; font-size:13px; color:var(--warm); }
+    .discount-row .amount { margin-left:auto; font-weight:700; }
+    .cart-total { display:flex; justify-content:space-between; padding-top:12px; margin-top:8px; border-top:2px solid var(--border); font-size:18px; font-weight:700; }
+    .cart-total .total-amount { color:var(--accent); }
+    .checkout-btn { width:100%; padding:14px; background:var(--gradient-1); border:none; border-radius:10px; color:white; font-size:15px; font-weight:600; cursor:pointer; margin-top:16px; transition:all 0.2s; }
+    .checkout-btn:hover { opacity:0.9; transform:scale(1.01); }
+    .secure-text { text-align:center; font-size:11px; color:var(--text-dim); margin-top:10px; display:flex; align-items:center; justify-content:center; gap:4px; }
+
+    .enroll-modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:300; display:none; align-items:center; justify-content:center; padding:24px; }
+    .enroll-modal-overlay.show { display:flex; }
+    .enroll-modal { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); max-width:640px; width:100%; max-height:90vh; overflow-y:auto; animation:modalIn 0.25s ease; }
+    .enroll-modal-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .enroll-modal-header h2 { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:600; }
+    .enroll-modal-body { padding:24px; }
+    .enroll-program-info { background:var(--surface); border-radius:12px; padding:16px; margin-bottom:20px; }
+    .enroll-program-info .name { font-size:16px; font-weight:600; margin-bottom:6px; }
+    .enroll-program-info .meta { font-size:13px; color:var(--text-muted); display:flex; gap:16px; flex-wrap:wrap; }
+    .enroll-child-select { margin-bottom:20px; }
+    .enroll-child-select h4 { font-size:14px; font-weight:600; margin-bottom:10px; }
+    .enroll-child-option { display:flex; align-items:center; gap:12px; padding:12px; background:var(--surface); border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; margin-bottom:8px; }
+    .enroll-child-option:hover { border-color:var(--primary); }
+    .enroll-child-option.selected { border-color:var(--accent); background:rgba(0,206,201,0.08); }
+    .enroll-child-option .emoji { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .enroll-child-option .info .name { font-size:14px; font-weight:600; }
+    .enroll-child-option .info .detail { font-size:12px; color:var(--text-muted); }
+    .enroll-child-option .check { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); margin-left:auto; display:flex; align-items:center; justify-content:center; }
+    .enroll-child-option.selected .check { background:var(--accent); border-color:var(--accent); }
+    .enroll-schedule-section { margin-bottom:20px; }
+    .enroll-schedule-section h4 { font-size:14px; font-weight:600; margin-bottom:10px; }
+    .enroll-dates-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:12px; }
+    .enroll-date-chip { padding:10px 14px; background:var(--surface); border:2px solid var(--border); border-radius:10px; min-width:130px; cursor:pointer; transition:all 0.2s; flex-shrink:0; }
+    .enroll-date-chip:hover { border-color:var(--primary); }
+    .enroll-date-chip.selected { border-color:var(--accent); background:rgba(0,206,201,0.08); }
+    .enroll-date-chip .dates { font-size:13px; font-weight:600; }
+    .enroll-date-chip .price { font-size:12px; color:var(--text-muted); }
+    .enroll-times-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+    .enroll-time-chip { padding:12px; background:var(--surface); border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s; }
+    .enroll-time-chip:hover { border-color:var(--primary); }
+    .enroll-time-chip.selected { border-color:var(--accent); background:rgba(0,206,201,0.08); }
+    .enroll-time-chip .time { font-size:14px; font-weight:600; }
+    .enroll-time-chip .day { font-size:12px; color:var(--text-muted); }
+    .enroll-time-chip .spots { font-size:11px; color:var(--success); margin-top:4px; }
+    .enroll-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+    .sibling-add-btn { width:100%; padding:12px; background:var(--gradient-2); border:none; border-radius:10px; color:white; font-size:14px; font-weight:600; cursor:pointer; margin-top:12px; transition:all 0.2s; }
+    .sibling-add-btn:hover { opacity:0.9; }
+
+    /* Modal */
+    .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:200; display:none; align-items:center; justify-content:center; padding:24px; }
+    .modal-overlay.show { display:flex; }
+    .modal-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); max-width:540px; width:100%; max-height:85vh; overflow-y:auto; animation:modalIn 0.25s ease; }
+    @keyframes modalIn { from{opacity:0;transform:scale(0.96) translateY(16px);} to{opacity:1;transform:scale(1) translateY(0);} }
+    .modal-top { padding:20px 20px 0; display:flex; justify-content:space-between; align-items:flex-start; }
+    .modal-close { width:32px; height:32px; border-radius:8px; background:var(--surface); border:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .modal-content { padding:20px; }
+    .ai-rec-box { background:linear-gradient(135deg,rgba(108,92,231,0.1) 0%,rgba(0,206,201,0.1) 100%); border:1px solid rgba(108,92,231,0.25); border-radius:12px; padding:16px; margin-bottom:20px; }
+    .ai-rec-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .ai-rec-head .icon { width:28px; height:28px; background:var(--gradient-1); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; }
+    .ai-rec-head span { font-size:13px; font-weight:600; color:var(--primary-light); }
+    .ai-rec-body { font-size:13px; line-height:1.7; }
+    .ai-rec-body strong { color:var(--primary-light); }
+    .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .compare-card { background:var(--surface); border:2px solid var(--border); border-radius:12px; padding:16px; cursor:pointer; transition:all 0.2s; }
+    .compare-card:hover { border-color:var(--primary); }
+    .compare-card.picked { border-color:var(--accent); background:rgba(0,206,201,0.05); }
+    .compare-card h4 { font-size:15px; margin-bottom:6px; }
+    .compare-card .price { font-size:22px; font-weight:700; color:var(--accent); margin-bottom:10px; }
+    .compare-card .price span { font-size:12px; color:var(--text-muted); font-weight:400; }
+    .compare-list { list-style:none; }
+    .compare-list li { font-size:12px; color:var(--text-muted); padding:4px 0; display:flex; align-items:center; gap:6px; }
+    .compare-list li::before { content:'✓'; color:var(--success); font-weight:700; }
+    .modal-btns { display:flex; gap:10px; }
+    .modal-btns .btn-sec { flex:1; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--text); font-weight:500; cursor:pointer; }
+    .modal-btns .btn-main { flex:2; padding:12px; background:var(--gradient-1); border:none; border-radius:10px; color:white; font-weight:600; cursor:pointer; }
+
+    /* Marketing */
+    .mkt-hero { text-align:center; padding:60px 0 40px; }
+    .mkt-title { font-family:'Space Grotesk',sans-serif; font-size:48px; font-weight:800; line-height:1.05; margin-bottom:16px; }
+    .mkt-sub { font-size:18px; color:var(--text-muted); max-width:600px; margin:0 auto 32px; }
+    .mkt-btns { display:flex; gap:12px; justify-content:center; margin-bottom:48px; }
+    .btn-lg { padding:14px 28px; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; border:none; transition:all 0.2s; }
+    .btn-lg.primary { background:var(--gradient-1); color:white; }
+    .btn-lg.ghost { background:var(--bg-card); border:1px solid var(--border); color:var(--text); }
+    .btn-lg:hover { transform:translateY(-2px); }
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:48px 0; }
+    .stat-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; text-align:center; }
+    .stat-val { font-family:'Space Grotesk',sans-serif; font-size:36px; font-weight:700; background:var(--gradient-1); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:4px; }
+    .stat-lbl { font-size:13px; color:var(--text-muted); }
+    .feat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:48px 0; }
+    .feat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; }
+    .feat-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:16px; }
+    .feat-title { font-size:16px; font-weight:600; margin-bottom:8px; }
+    .feat-desc { font-size:13px; color:var(--text-muted); line-height:1.6; }
+
+    /* Before/After */
+    .ba-grid { display:grid; grid-template-columns:1fr 60px 1fr; gap:0; align-items:start; margin:48px 0; }
+    .ba-card { background:var(--bg-card); border-radius:var(--radius-lg); padding:32px; }
+    .ba-card.before { border:1px solid var(--coral); }
+    .ba-card.after { border:1px solid var(--success); }
+    .ba-label { font-size:11px; text-transform:uppercase; letter-spacing:2px; font-weight:600; margin-bottom:20px; }
+    .ba-card.before .ba-label { color:var(--coral); }
+    .ba-card.after .ba-label { color:var(--success); }
+    .ba-list { list-style:none; }
+    .ba-list li { padding:12px 0; border-bottom:1px solid var(--border); font-size:14px; display:flex; align-items:flex-start; gap:10px; }
+    .ba-list li:last-child { border-bottom:none; }
+    .ba-card.before .ba-list li::before { content:'✕'; color:var(--coral); font-weight:700; flex-shrink:0; }
+    .ba-card.after .ba-list li::before { content:'✓'; color:var(--success); font-weight:700; flex-shrink:0; }
+    .ba-arrow { display:flex; align-items:center; justify-content:center; padding-top:120px; }
+    .ba-arrow-circle { width:52px; height:52px; background:var(--gradient-1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px; }
+    .metrics-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:40px 0; }
+    .metric-box { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:24px; text-align:center; }
+    .metric-was { font-size:13px; color:var(--coral); margin-bottom:6px; }
+    .metric-now { font-family:'Space Grotesk',sans-serif; font-size:32px; font-weight:700; color:var(--success); margin-bottom:6px; }
+    .metric-lbl { font-size:12px; color:var(--text-muted); }
+
+    .footer { text-align:center; padding:32px 0; border-top:1px solid var(--border); margin-top:60px; }
+    .footer p { font-size:12px; color:var(--text-dim); }
+
+    /* Profile Modal */
+    .profile-modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:300; display:none; align-items:center; justify-content:center; padding:24px; }
+    .profile-modal-overlay.show { display:flex; }
+    .profile-modal { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); max-width:720px; width:100%; max-height:90vh; overflow-y:auto; animation:modalIn 0.25s ease; }
+    .profile-modal-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .profile-modal-header h2 { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600; }
+    .profile-modal-body { padding:24px; display:grid; grid-template-columns:1fr 260px; gap:24px; }
+    .profile-form { display:flex; flex-direction:column; gap:18px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-label { font-size:13px; font-weight:500; color:var(--text-muted); }
+    .form-input { padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; font-size:14px; color:var(--text); font-family:'Inter',sans-serif; outline:none; transition:all 0.2s; }
+    .form-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(108,92,231,0.12); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .emoji-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+    .emoji-option { width:100%; aspect-ratio:1; background:var(--surface); border:2px solid var(--border); border-radius:10px; font-size:22px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; }
+    .emoji-option:hover { border-color:var(--primary); }
+    .emoji-option.selected { border-color:var(--accent); background:rgba(0,206,201,0.1); }
+    .color-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+    .color-option { width:100%; aspect-ratio:1; border-radius:10px; border:2px solid transparent; cursor:pointer; transition:all 0.2s; }
+    .color-option:hover { transform:scale(1.1); }
+    .color-option.selected { border-color:white; box-shadow:0 0 0 2px var(--accent); }
+    .interest-chips { display:flex; flex-wrap:wrap; gap:8px; }
+    .interest-chip { padding:8px 14px; background:var(--surface); border:1px solid var(--border); border-radius:20px; font-size:13px; color:var(--text-muted); cursor:pointer; transition:all 0.2s; }
+    .interest-chip:hover { border-color:var(--primary); color:var(--text); }
+    .interest-chip.selected { background:var(--primary); border-color:var(--primary); color:white; }
+    .profile-preview-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; position:sticky; top:24px; }
+    .preview-label { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--text-dim); margin-bottom:16px; }
+    .preview-emoji { width:56px; height:56px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:14px; }
+    .preview-name { font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:600; margin-bottom:4px; }
+    .preview-grade { font-size:14px; color:var(--text-muted); margin-bottom:12px; }
+    .preview-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .preview-tag { padding:4px 10px; background:var(--bg-card); border-radius:8px; font-size:12px; color:var(--text-muted); }
+    .profile-modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+    .btn-sec { padding:10px 20px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--text); font-weight:500; cursor:pointer; font-size:14px; }
+    .btn-main { padding:10px 24px; background:var(--gradient-1); border:none; border-radius:10px; color:white; font-weight:600; cursor:pointer; font-size:14px; }
+    .btn-main:disabled { opacity:0.5; cursor:not-allowed; }
+    .profile-actions { display:flex; gap:6px; }
+    .profile-action-btn { width:24px; height:24px; border-radius:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:12px; }
+    .profile-action-btn:hover { border-color:var(--primary); color:var(--text); }
+    .profile-action-btn.delete:hover { border-color:var(--coral); color:var(--coral); }
+    .form-input.error { border-color:var(--coral); box-shadow:0 0 0 3px rgba(255,118,117,0.12); }
+    .form-error { font-size:11px; color:var(--coral); margin-top:2px; display:none; }
+    .form-error.show { display:block; }
+    .form-input.valid { border-color:var(--success); }
+    .profile-meta { font-size:11px; color:var(--text-dim); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+    .form-section-label { font-size:12px; font-weight:600; color:var(--primary-light); text-transform:uppercase; letter-spacing:1px; margin-top:8px; padding-top:12px; border-top:1px solid var(--border); }
+
+    .empty-state { text-align:center; padding:60px 20px; }
+    .empty-state .icon { font-size:48px; margin-bottom:16px; }
+    .empty-state h3 { font-size:18px; margin-bottom:8px; }
+    .empty-state p { font-size:14px; color:var(--text-muted); }
+
+    @media (max-width:1024px) { .reg-layout{grid-template-columns:1fr;} .sidebar{position:static;} .feat-grid{grid-template-columns:1fr 1fr;} .stats-row{grid-template-columns:1fr 1fr;} }
+    @media (max-width:768px) { .container{padding:0 16px;} .hero-title{font-size:32px;} .mkt-title{font-size:36px;} .services-grid{grid-template-columns:1fr;} .compare-grid{grid-template-columns:1fr;} .ba-grid{grid-template-columns:1fr;} .ba-arrow{padding:16px 0;} .feat-grid{grid-template-columns:1fr;} .stats-row{grid-template-columns:1fr 1fr;} .metrics-row{grid-template-columns:1fr;} .nav-tabs{display:none;} }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-left">
+      <div class="nav-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="url(#g1)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/><defs><linearGradient id="g1" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#6C5CE7"/><stop offset="1" stop-color="#00CEC9"/></linearGradient></defs></svg>
+        UP Robotics × Omnify AI
+      </div>
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-screen="discovery">Discovery</button>
+        <button class="nav-tab" data-screen="registration">Registration</button>
+        <button class="nav-tab" data-screen="modal">AI Helper</button>
+        <button class="nav-tab" data-screen="marketing">For Business</button>
+        <button class="nav-tab" data-screen="beforeafter">Before/After</button>
+      </div>
+    </div>
+    <div class="nav-right">
+      <button class="cart-btn" onclick="showScreen('registration')">🛒 Cart <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+  </nav>
+
+  <!-- DISCOVERY -->
+  <section id="discovery" class="screen active">
+    <div class="container">
+      <div class="discovery-hero">
+        <div class="glow"></div>
+        <div class="ai-badge"><span class="dot"></span> AI-Powered · UP Robotics Bethesda</div>
+        <h1 class="hero-title">Find the <span class="gradient">perfect program</span><br>for your child</h1>
+        <p class="hero-sub">Tell us about your child. Our AI matches them with the right program, schedule, and price — instantly.</p>
+        <div class="ai-input-wrap">
+          <svg class="ai-input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" class="ai-input" id="aiInput" placeholder="e.g. My 8-year-old loves robotics and is free on weekdays after school..." onkeydown="if(event.key==='Enter')runAI()">
+          <button class="ai-go-btn" id="aiGoBtn" onclick="runAI()">
+            <span id="aiBtnText">Ask AI</span>
+            <span id="aiBtnLoader" style="display:none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="31.4" stroke-dashoffset="10"/></svg>
+            </span>
+          </button>
+        </div>
+        <div class="quick-chips">
+          <span class="chip" onclick="useChip(this)">Best for beginners</span>
+          <span class="chip" onclick="useChip(this)">Summer camps for Grade 3</span>
+          <span class="chip" onclick="useChip(this)">Weekend classes</span>
+          <span class="chip" onclick="useChip(this)">Python coding</span>
+          <span class="chip" onclick="useChip(this)">Birthday party ideas</span>
+        </div>
+      </div>
+
+      <div class="profiles-section">
+        <div class="section-head">
+          <h2 class="section-title">Child Profiles</h2>
+          <button class="section-action" onclick="openProfileModal()">+ Add Child</button>
+        </div>
+        <div class="profiles-row" id="profilesRow"></div>
+      </div>
+
+      <div id="aiReasoning" style="display:none;"></div>
+
+      <div class="filter-bar" id="filterBar">
+        <span class="filter-label">Filter:</span>
+        <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">All</button>
+        <button class="filter-btn" data-filter="summer-camp" onclick="setFilter(this)">Summer Camps</button>
+        <button class="filter-btn" data-filter="program" onclick="setFilter(this)">Programs</button>
+        <button class="filter-btn" data-filter="party" onclick="setFilter(this)">Parties</button>
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+
+      <div class="services-grid" id="servicesGrid"></div>
+    </div>
+  </section>
+
+  <!-- REGISTRATION -->
+  <section id="registration" class="screen">
+    <div class="container">
+      <div class="reg-header">
+        <h1 class="reg-title">Complete Enrollment</h1>
+        <p class="reg-sub">Review your selections, pick schedules, and checkout</p>
+      </div>
+      <div class="reg-layout">
+        <div class="reg-main">
+          <div class="progress-wrap">
+            <div class="step-labels">
+              <span class="step-label active" id="stepReview">Review</span>
+              <span class="step-label" id="stepSchedule">Schedule</span>
+              <span class="step-label" id="stepPayment">Payment</span>
+            </div>
+            <div class="step-bar">
+              <div class="step-seg current" id="seg1"></div>
+              <div class="step-seg" id="seg2"></div>
+              <div class="step-seg" id="seg3"></div>
+            </div>
+          </div>
+          <div id="cartItems"></div>
+          <div class="sibling-block" id="siblingBlock" style="display:none;">
+            <div class="sibling-head">
+              <div class="sibling-icon">👫</div>
+              <div class="sibling-text">
+                <h4>AI Detected: Sibling Opportunity</h4>
+                <p>Enroll multiple children in the same program and save 10%</p>
+              </div>
+            </div>
+            <div id="siblingStatus"></div>
+            <div class="sibling-enroll-section" id="siblingEnrollSection" style="display:none;">
+              <h4>🎯 Enroll Sibling in Same Program</h4>
+              <div id="siblingEnrollList"></div>
+            </div>
+          </div>
+        </div>
+        <div class="sidebar">
+          <div class="cart-card">
+            <div class="cart-title">Order Summary</div>
+            <div id="cartSummary"></div>
+            <div id="discountRow" style="display:none;"></div>
+            <div class="cart-total">
+              <span>Total</span>
+              <span class="total-amount" id="totalAmount">$0</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Proceed to Payment →</button>
+            <div class="secure-text">🔒 Secure checkout · Powered by Omnify</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL -->
+  <section id="modal" class="screen">
+    <div class="container" style="text-align:center; padding-top:80px;">
+      <h1 class="hero-title" style="font-size:32px;">AI Decision <span class="gradient">Helper</span></h1>
+      <p class="hero-sub" style="margin:8px auto 32px;">See how AI helps parents choose between options with real data</p>
+      <button class="btn-lg primary" onclick="openModal()">Open AI Comparison</button>
+    </div>
+  </section>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div class="modal-top">
+        <div>
+          <h3 style="font-size:18px; font-weight:600;">Trial vs Full Program?</h3>
+          <p style="font-size:13px; color:var(--text-muted);">AI comparison for Intro to Robotics</p>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-content">
+        <div class="ai-rec-box">
+          <div class="ai-rec-head">
+            <div class="icon">✨</div>
+            <span>AI Recommendation</span>
+          </div>
+          <div class="ai-rec-body">
+            For a Grade 2 student, I recommend the <strong>4-week Intro to Robotics program ($250)</strong> over individual sessions. At <strong>$62.50/session</strong>, it's 30% cheaper per session than booking separately. The program runs Sun 12:30 PM and Mon 4:30 PM — both times have availability.
+          </div>
+        </div>
+        <div class="compare-grid">
+          <div class="compare-card picked" onclick="pickCompare(this)">
+            <h4>🚀 4-Week Program</h4>
+            <div class="price">$250 <span>/ 4 weeks</span></div>
+            <ul class="compare-list">
+              <li>$62.50 per session</li>
+              <li>Sun & Mon slots available</li>
+              <li>Jan 12 – Jun 1 window</li>
+              <li>Consistent weekly schedule</li>
+              <li>Progress tracking included</li>
+            </ul>
+          </div>
+          <div class="compare-card" onclick="pickCompare(this)">
+            <h4>🎯 Summer Camp</h4>
+            <div class="price">$595 <span>/ 1 week</span></div>
+            <ul class="compare-list">
+              <li>Intensive 5-day camp</li>
+              <li>Multiple summer dates</li>
+              <li>Full-day immersion</li>
+              <li>Take-home projects</li>
+              <li>Great for deeper learning</li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-btns">
+          <button class="btn-sec" onclick="closeModal()">Ask Another Question</button>
+          <button class="btn-main" onclick="closeModal(); addToCartById('prog-intro-robotics'); showScreen('registration');">Enroll in 4-Week Program →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="profile-modal-overlay" id="profileModalOverlay" onclick="closeProfileModal(event)">
+    <div class="profile-modal" onclick="event.stopPropagation()">
+      <div class="profile-modal-header">
+        <h2 id="profileModalTitle">Add Child Profile</h2>
+        <button class="modal-close" onclick="closeProfileModal()">✕</button>
+      </div>
+      <div class="profile-modal-body">
+        <div class="profile-form">
+          <div class="form-group">
+            <label class="form-label">Avatar</label>
+            <div class="emoji-grid" id="emojiGrid"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Accent Color</label>
+            <div class="color-grid" id="colorGrid"></div>
+          </div>
+          <div class="form-section-label">Basic Information</div>
+          <div class="form-group">
+            <label class="form-label">Child's Name *</label>
+            <input type="text" class="form-input" id="profileName" placeholder="e.g. Arjun" oninput="updatePreview()">
+            <span class="form-error" id="nameError">Name is required</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" class="form-input" id="profileDOB" onchange="onDOBChange()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Age</label>
+              <select class="form-input" id="profileAge" onchange="updatePreview()">
+                <option value="">Select</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Grade *</label>
+              <select class="form-input" id="profileGrade" onchange="updatePreview()">
+                <option value="">Select grade</option>
+              </select>
+              <span class="form-error" id="gradeError">Grade is required</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">School Name</label>
+              <input type="text" class="form-input" id="profileSchool" placeholder="e.g. Lincoln Elementary" oninput="updatePreview()">
+            </div>
+          </div>
+          <div class="form-section-label">Interests & Preferences</div>
+          <div class="form-group">
+            <label class="form-label">Interests (select at least 1) *</label>
+            <div class="interest-chips" id="interestChips"></div>
+            <span class="form-error" id="interestError">Select at least one interest</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Schedule Notes</label>
+            <input type="text" class="form-input" id="profileNotes" placeholder="e.g. Free on weekdays, loves building things" oninput="updatePreview()">
+          </div>
+          <div class="form-section-label">Health & Safety</div>
+          <div class="form-group">
+            <label class="form-label">Allergies / Medical Notes</label>
+            <textarea class="form-input" id="profileAllergies" rows="2" placeholder="e.g. Peanut allergy, asthma inhaler" oninput="updatePreview()" style="resize:vertical;min-height:60px;"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Emergency Contact Name</label>
+              <input type="text" class="form-input" id="profileEmergencyName" placeholder="Parent/Guardian name" oninput="updatePreview()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Emergency Phone</label>
+              <input type="tel" class="form-input" id="profileEmergencyPhone" placeholder="(555) 123-4567" oninput="updatePreview()">
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="profile-preview-card">
+            <div class="preview-label">Live Preview</div>
+            <div class="preview-emoji" id="previewEmoji" style="background:#6C5CE720;">👦</div>
+            <div class="preview-name" id="previewName">Child's Name</div>
+            <div class="preview-grade" id="previewGrade">Select grade</div>
+            <div class="preview-tags" id="previewTags"></div>
+            <div id="previewSchool" style="font-size:12px;color:var(--text-dim);margin-top:8px;display:none;"></div>
+            <div id="previewAllergy" style="font-size:11px;color:var(--coral);margin-top:6px;display:none;">⚠️ Allergy noted</div>
+            <div class="profile-meta" id="previewMeta" style="display:none;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-modal-footer">
+        <button class="btn-sec" onclick="closeProfileModal()">Cancel</button>
+        <button class="btn-main" id="profileSaveBtn" onclick="saveProfile()" disabled>Save Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENROLLMENT MODAL -->
+  <div class="enroll-modal-overlay" id="enrollModalOverlay" onclick="closeEnrollModal(event)">
+    <div class="enroll-modal" onclick="event.stopPropagation()">
+      <div class="enroll-modal-header">
+        <h2 id="enrollModalTitle">Enroll in Program</h2>
+        <button class="modal-close" onclick="closeEnrollModal()">✕</button>
+      </div>
+      <div class="enroll-modal-body">
+        <div class="enroll-program-info" id="enrollProgramInfo"></div>
+        <div class="enroll-child-select" id="enrollChildSelect"></div>
+        <div class="enroll-schedule-section" id="enrollScheduleSection" style="display:none;">
+          <h4>📅 Select Schedule</h4>
+          <div id="enrollScheduleContent"></div>
+        </div>
+      </div>
+      <div class="enroll-footer">
+        <button class="btn-sec" onclick="closeEnrollModal()">Cancel</button>
+        <button class="btn-main" id="enrollConfirmBtn" onclick="confirmEnrollment()" disabled>Enroll Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKETING -->
+  <section id="marketing" class="screen">
+    <div class="container">
+      <div class="mkt-hero">
+        <div class="ai-badge"><span class="dot"></span> For Business Owners</div>
+        <h1 class="mkt-title">Stop losing parents at the <span class="gradient">registration wall</span></h1>
+        <p class="mkt-sub">Your visitors don't want another form. They want a conversation. Omnify AI turns browsing into enrolling — automatically.</p>
+        <div class="mkt-btns">
+          <button class="btn-lg primary">Get Early Access</button>
+          <button class="btn-lg ghost">Watch Demo</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-val">3x</div><div class="stat-lbl">Higher conversion</div></div>
+        <div class="stat-box"><div class="stat-val">80%</div><div class="stat-lbl">Less support calls</div></div>
+        <div class="stat-box"><div class="stat-val">2 min</div><div class="stat-lbl">Avg enrollment time</div></div>
+        <div class="stat-box"><div class="stat-val">92%</div><div class="stat-lbl">Parent satisfaction</div></div>
+      </div>
+      <div class="section-head" style="margin-top:48px;"><h2 class="section-title" style="font-size:28px;">How it works</h2></div>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-icon" style="background:rgba(108,92,231,0.15);">🧠</div>
+          <div class="feat-title">Understands Intent</div>
+          <div class="feat-desc">Parents describe what they want in natural language. AI understands grade, interests, schedule, and budget.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon" style="background:rgba(0,206,201,0.15);">⚡</div>
+          <div class="feat-title">Instant Matching</div>
+          <div class="feat-desc">AI cross-references your catalog, real-time availability, and child profiles to surface perfect programs.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon" style="background:rgba(253,203,110,0.15);">💰</div>
+          <div class="feat-title">Smart Upselling</div>
+          <div class="feat-desc">AI suggests sibling discounts, camp upgrades, and trial-to-program conversions automatically.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon" style="background:rgba(255,118,117,0.15);">📅</div>
+          <div class="feat-title">Schedule Intelligence</div>
+          <div class="feat-desc">AI considers family calendars, sibling schedules, and class capacity to recommend optimal times.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon" style="background:rgba(0,184,148,0.15);">🎯</div>
+          <div class="feat-title">Decision Support</div>
+          <div class="feat-desc">When parents hesitate, AI provides personalized comparisons and gentle nudges — 24/7.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon" style="background:rgba(162,155,254,0.15);">📊</div>
+          <div class="feat-title">Business Insights</div>
+          <div class="feat-desc">Understand what parents search for, where they drop off, and which programs need visibility.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE/AFTER -->
+  <section id="beforeafter" class="screen">
+    <div class="container">
+      <div class="mkt-hero" style="padding-top:40px;">
+        <div class="ai-badge"><span class="dot"></span> The Impact</div>
+        <h1 class="mkt-title" style="font-size:40px;">The difference is <span class="gradient">night and day</span></h1>
+        <p class="mkt-sub">See how AI transforms enrollment for parents and the bottom line for businesses like UP Robotics.</p>
+      </div>
+      <div class="ba-grid">
+        <div class="ba-card before">
+          <div class="ba-label">Before — Traditional Flow</div>
+          <ul class="ba-list">
+            <li>Long dropdown filters and search forms</li>
+            <li>Parents abandon after 3+ minutes of browsing</li>
+            <li>No personalization — same view for everyone</li>
+            <li>Manual sibling enrollment (double the work)</li>
+            <li>Hidden pricing until checkout</li>
+            <li>Phone calls for every question</li>
+          </ul>
+        </div>
+        <div class="ba-arrow"><div class="ba-arrow-circle">→</div></div>
+        <div class="ba-card after">
+          <div class="ba-label">After — AI-Powered Flow</div>
+          <ul class="ba-list">
+            <li>One natural language input — done in seconds</li>
+            <li>Personalized recommendations in under 2 minutes</li>
+            <li>AI understands each child's unique profile</li>
+            <li>Auto-detects siblings, applies discounts</li>
+            <li>Transparent pricing with smart comparisons</li>
+            <li>AI answers questions instantly, 24/7</li>
+          </ul>
+        </div>
+      </div>
+      <div class="metrics-row">
+        <div class="metric-box"><div class="metric-was">Was: 2.4%</div><div class="metric-now">7.8%</div><div class="metric-lbl">Conversion Rate</div></div>
+        <div class="metric-box"><div class="metric-was">Was: 12 min</div><div class="metric-now">2 min</div><div class="metric-lbl">Avg Enrollment Time</div></div>
+        <div class="metric-box"><div class="metric-was">Was: $89</div><div class="metric-now">$147</div><div class="metric-lbl">Average Order Value</div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>UP Robotics × Omnify AI — Design Assessment · Real data from uproboticstech.getomnify.com · May 2026</p>
+  </footer>
+
+  <script>
+    // ===== REAL DATA FROM UP ROBOTICS =====
+    const services = [
+      {id:'camp-3d-aug',type:'summer-camp',name:'3D Printing Camp 8/3 - 8/7',price:595,duration:'1 week',dates:'Aug 3-8, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6','Grade 7'],days:'Mon-Fri',time:'Full Day',spots:8,emoji:'🖨️',tags:['3D Printing','Design','STEM']},
+      {id:'camp-robot-exp-jun',type:'summer-camp',name:'Robot Explorers — Science, Space, Animals',price:475,duration:'4 days',dates:'Jun 29 - Jul 2, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Thu',time:'Full Day',spots:12,emoji:'🤖',tags:['Robotics','Science','Beginner']},
+      {id:'camp-robot-exp-jul13',type:'summer-camp',name:'Robot Explorers — Science, Space, Animals',price:550,duration:'1 week',dates:'Jul 13-18, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🤖',tags:['Robotics','Science','Beginner']},
+      {id:'camp-robot-exp-jul27',type:'summer-camp',name:'Robot Explorers — Science, Space, Animals',price:550,duration:'1 week',dates:'Jul 27 - Aug 1, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🤖',tags:['Robotics','Science','Beginner']},
+      {id:'camp-robot-exp-aug10',type:'summer-camp',name:'Robot Explorers — Science, Space, Animals',price:550,duration:'1 week',dates:'Aug 10-15, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🤖',tags:['Robotics','Science','Beginner']},
+      {id:'camp-robot-exp-aug24',type:'summer-camp',name:'Robot Explorers — Science, Space, Animals',price:550,duration:'1 week',dates:'Aug 24-29, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🤖',tags:['Robotics','Science','Beginner']},
+      {id:'camp-transport-jun',type:'summer-camp',name:'Robot Explorers — Transportation, Rides & Games',price:550,duration:'1 week',dates:'Jun 22-27, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚗',tags:['Robotics','Transportation','Games']},
+      {id:'camp-transport-jul6',type:'summer-camp',name:'Robot Explorers — Transportation, Rides & Games',price:550,duration:'1 week',dates:'Jul 6-11, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚗',tags:['Robotics','Transportation','Games']},
+      {id:'camp-transport-jul20',type:'summer-camp',name:'Robot Explorers — Transportation, Rides & Games',price:550,duration:'1 week',dates:'Jul 20-25, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚗',tags:['Robotics','Transportation','Games']},
+      {id:'camp-transport-aug3',type:'summer-camp',name:'Robot Explorers — Transportation, Rides & Games',price:550,duration:'1 week',dates:'Aug 3-8, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚗',tags:['Robotics','Transportation','Games']},
+      {id:'camp-transport-aug17',type:'summer-camp',name:'Robot Explorers — Transportation, Rides & Games',price:550,duration:'1 week',dates:'Aug 17-22, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚗',tags:['Robotics','Transportation','Games']},
+      {id:'camp-competitive-jun',type:'summer-camp',name:'Competitive Robotics Bootcamp',price:695,duration:'1 week',dates:'Jun 22-27, 2026',grades:['Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Mon-Sat',time:'Full Day',spots:6,emoji:'🏆',tags:['Competitive','Advanced','Robotics']},
+      {id:'camp-competitive-jul6',type:'summer-camp',name:'Competitive Robotics Bootcamp',price:695,duration:'1 week',dates:'Jul 6-11, 2026',grades:['Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Mon-Sat',time:'Full Day',spots:6,emoji:'🏆',tags:['Competitive','Advanced','Robotics']},
+      {id:'camp-competitive-jul20',type:'summer-camp',name:'Competitive Robotics Bootcamp',price:695,duration:'1 week',dates:'Jul 20-25, 2026',grades:['Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Mon-Sat',time:'Full Day',spots:6,emoji:'🏆',tags:['Competitive','Advanced','Robotics']},
+      {id:'camp-competitive-aug3',type:'summer-camp',name:'Competitive Robotics Bootcamp',price:695,duration:'1 week',dates:'Aug 3-8, 2026',grades:['Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Mon-Sat',time:'Full Day',spots:6,emoji:'🏆',tags:['Competitive','Advanced','Robotics']},
+      {id:'camp-competitive-aug17',type:'summer-camp',name:'Competitive Robotics Bootcamp',price:695,duration:'1 week',dates:'Aug 17-22, 2026',grades:['Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Mon-Sat',time:'Full Day',spots:6,emoji:'🏆',tags:['Competitive','Advanced','Robotics']},
+      {id:'camp-python-jun',type:'summer-camp',name:'Python Coding',price:595,duration:'1 week',dates:'Jun 22-27, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🐍',tags:['Python','Coding','AI']},
+      {id:'camp-python-jul6',type:'summer-camp',name:'Python Coding',price:595,duration:'1 week',dates:'Jul 6-11, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🐍',tags:['Python','Coding','AI']},
+      {id:'camp-python-jul20',type:'summer-camp',name:'Python Coding',price:595,duration:'1 week',dates:'Jul 20-25, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🐍',tags:['Python','Coding','AI']},
+      {id:'camp-python-aug3',type:'summer-camp',name:'Python Coding',price:595,duration:'1 week',dates:'Aug 3-8, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🐍',tags:['Python','Coding','AI']},
+      {id:'camp-python-aug17',type:'summer-camp',name:'Python Coding',price:595,duration:'1 week',dates:'Aug 17-22, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🐍',tags:['Python','Coding','AI']},
+      {id:'camp-tech-pioneers-jun',type:'summer-camp',name:'Tech Pioneers: Intro to Robotics',price:595,duration:'1 week',dates:'Jun 22-27, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚀',tags:['Robotics','Intro','LEGO']},
+      {id:'camp-tech-pioneers-jul6',type:'summer-camp',name:'Tech Pioneers: Intro to Robotics',price:595,duration:'5 days',dates:'Jul 6-10, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Fri',time:'Full Day',spots:10,emoji:'🚀',tags:['Robotics','Intro','LEGO']},
+      {id:'camp-tech-pioneers-jul20',type:'summer-camp',name:'Tech Pioneers: Intro to Robotics',price:595,duration:'1 week',dates:'Jul 20-25, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚀',tags:['Robotics','Intro','LEGO']},
+      {id:'camp-tech-pioneers-aug3',type:'summer-camp',name:'Tech Pioneers: Intro to Robotics',price:595,duration:'5 days',dates:'Aug 3-7, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Fri',time:'Full Day',spots:10,emoji:'🚀',tags:['Robotics','Intro','LEGO']},
+      {id:'camp-tech-pioneers-aug17',type:'summer-camp',name:'Tech Pioneers: Intro to Robotics',price:595,duration:'1 week',dates:'Aug 17-22, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🚀',tags:['Robotics','Intro','LEGO']},
+      {id:'camp-minecraft-jun',type:'summer-camp',name:'Minecraft Coding',price:525,duration:'5 days',dates:'Jun 29 - Jul 3, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6'],days:'Mon-Fri',time:'Full Day',spots:12,emoji:'⛏️',tags:['Minecraft','Coding','Fun']},
+      {id:'camp-minecraft-jul13',type:'summer-camp',name:'Minecraft Coding',price:595,duration:'1 week',dates:'Jul 13-18, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'⛏️',tags:['Minecraft','Coding','Fun']},
+      {id:'camp-minecraft-jul27',type:'summer-camp',name:'Minecraft Coding',price:595,duration:'1 week',dates:'Jul 27 - Aug 1, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'⛏️',tags:['Minecraft','Coding','Fun']},
+      {id:'camp-minecraft-aug10',type:'summer-camp',name:'Minecraft Coding',price:595,duration:'1 week',dates:'Aug 10-15, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'⛏️',tags:['Minecraft','Coding','Fun']},
+      {id:'camp-minecraft-aug24',type:'summer-camp',name:'Minecraft Coding',price:595,duration:'1 week',dates:'Aug 24-29, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'⛏️',tags:['Minecraft','Coding','Fun']},
+      {id:'camp-minecraft-g4-7-jun',type:'summer-camp',name:'Minecraft Coding (Rising Grades 4–7)',price:475,duration:'5 days',dates:'Jun 15-19, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7'],days:'Mon-Fri',time:'Full Day',spots:14,emoji:'⛏️',tags:['Minecraft','Coding','Fun']},
+      {id:'camp-obstacles-jun',type:'summer-camp',name:'Tech Pioneers: Obstacles and Crazy Creations',price:525,duration:'5 days',dates:'Jun 15-19, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Fri',time:'Full Day',spots:12,emoji:'🧱',tags:['LEGO','Obstacles','Creative']},
+      {id:'camp-obstacles-jun29',type:'summer-camp',name:'Tech Pioneers: Obstacles and Crazy Creations',price:525,duration:'5 days',dates:'Jun 29 - Jul 3, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Fri',time:'Full Day',spots:12,emoji:'🧱',tags:['LEGO','Obstacles','Creative']},
+      {id:'camp-obstacles-jul13',type:'summer-camp',name:'Tech Pioneers: Obstacles and Crazy Creations',price:595,duration:'1 week',dates:'Jul 13-18, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🧱',tags:['LEGO','Obstacles','Creative']},
+      {id:'camp-obstacles-jul27',type:'summer-camp',name:'Tech Pioneers: Obstacles and Crazy Creations',price:595,duration:'1 week',dates:'Jul 27 - Aug 1, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🧱',tags:['LEGO','Obstacles','Creative']},
+      {id:'camp-obstacles-aug10',type:'summer-camp',name:'Tech Pioneers: Obstacles and Crazy Creations',price:595,duration:'1 week',dates:'Aug 10-15, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🧱',tags:['LEGO','Obstacles','Creative']},
+      {id:'camp-obstacles-aug24',type:'summer-camp',name:'Tech Pioneers: Obstacles and Crazy Creations',price:595,duration:'1 week',dates:'Aug 24-29, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Mon-Sat',time:'Full Day',spots:10,emoji:'🧱',tags:['LEGO','Obstacles','Creative']},
+      {id:'prog-advanced-robotics',type:'program',name:'Advanced Robotics',price:275,duration:'4 weeks',dates:'Feb 23 - Jun 1, 2026',grades:['Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Monday',time:'4:30 PM - 6:30 PM',spots:8,emoji:'🤖',tags:['Advanced','Robotics','Weekly']},
+      {id:'prog-3d-printing',type:'program',name:'3D Printing: From Imagination to Creation',price:250,duration:'4 weeks',dates:'Jan 12 - Jun 1, 2026',grades:['Grade 3','Grade 4','Grade 5','Grade 6','Grade 7'],days:'Tuesday',time:'4:30 PM - 6:00 PM',spots:10,emoji:'🖨️',tags:['3D Printing','Design','Weekly']},
+      {id:'prog-marine-robotics',type:'program',name:'Marine Robotics Lab (SeaPerch)',price:250,duration:'4 weeks',dates:'Jan 12 - Jun 1, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Wed & Thu',time:'4:00 PM - 6:45 PM',spots:8,emoji:'🚢',tags:['Marine','Robotics','SeaPerch']},
+      {id:'prog-intro-robotics',type:'program',name:'Intro to Robotics',price:250,duration:'4 weeks',dates:'Jan 12 - Jun 1, 2026',grades:['Grade 1','Grade 2','Grade 3','Grade 4'],days:'Sun & Mon',time:'12:30 PM - 6:00 PM',spots:12,emoji:'🤖',tags:['Intro','Robotics','Beginner']},
+      {id:'prog-lego-robotics',type:'program',name:'Tech Pioneers: Advanced LEGO Robotics',price:250,duration:'4 weeks',dates:'Jan 12 - Jun 1, 2026',grades:['Grade 2','Grade 3','Grade 4','Grade 5'],days:'Sun & Tue',time:'12:30 PM - 6:30 PM',spots:10,emoji:'🧱',tags:['LEGO','Robotics','Advanced']},
+      {id:'prog-robot-explorers',type:'program',name:'Robot Explorers',price:175,duration:'4 weeks',dates:'Jan 12 - Jun 1, 2026',grades:['Grade 1','Grade 2','Grade 3'],days:'Sun & Mon',time:'12:45 PM - 5:30 PM',spots:14,emoji:'🔍',tags:['Exploration','Beginner','Young']},
+      {id:'prog-python-ai',type:'program',name:'Python Coding with Intro to AI',price:250,duration:'4 weeks',dates:'Jan 12 - Jun 1, 2026',grades:['Grade 4','Grade 5','Grade 6','Grade 7','Grade 8'],days:'Mon & Tue',time:'4:30 PM - 6:00 PM',spots:10,emoji:'🐍',tags:['Python','AI','Coding']},
+      {id:'party-robot-builders',type:'party',name:'Robot Builders Birthday Bash!!',price:450,duration:'2 hours',dates:'Available Saturdays',grades:['Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'],days:'Saturday',time:'4:00 PM - 6:00 PM',spots:20,emoji:'🎂',tags:['Birthday','Party','Robotics']},
+    ];
+
+    // ===== STATE =====
+    const STORAGE_KEY = 'omnify_child_profiles';
+    const STORAGE_ACTIVE = 'omnify_active_profile';
+
+    const defaultProfiles = [
+      {id:1,name:'Arjun',age:7,dob:'',grade:'Grade 2',emoji:'👦',interests:['Robotics','Coding','Science'],color:'#6C5CE7',notes:'',school:'',allergies:'',emergencyName:'',emergencyPhone:'',createdAt:new Date('2026-01-15').toISOString(),updatedAt:new Date('2026-01-15').toISOString()},
+      {id:2,name:'Meera',age:9,dob:'',grade:'Grade 4',emoji:'👧',interests:['Art','Design','Minecraft'],color:'#00CEC9',notes:'',school:'',allergies:'',emergencyName:'',emergencyPhone:'',createdAt:new Date('2026-01-15').toISOString(),updatedAt:new Date('2026-01-15').toISOString()},
+    ];
+
+    let profiles = loadProfiles();
+    let activeProfileId = parseInt(localStorage.getItem(STORAGE_ACTIVE)) || profiles[0]?.id || 1;
+    let cart = [];
+    let currentFilter = 'all';
+    let aiResults = null;
+    let editingProfileId = null;
+    let selectedEmoji = '👦';
+    let selectedColor = '#6C5CE7';
+    let selectedInterests = [];
+
+    const avatarEmojis = ['👦','👧','🧒','👶','🧑','👱','👨‍🦰','👩‍🦰','👨‍🦱','👩‍🦱','🧑‍🎓','🧑‍💻'];
+    const accentColors = ['#6C5CE7','#00CEC9','#FDCB6E','#FF7675','#A29BFE','#00B894','#E17055','#74B9FF','#FD79A8','#55EFC4','#FAB1A0','#DFE6E9'];
+    const allInterests = ['Robotics','Coding','Python','Minecraft','LEGO','3D Printing','Science','Math','Art','Design','Games','AI'];
+    const gradeOptions = ['Pre-K','Kindergarten','Grade 1','Grade 2','Grade 3','Grade 4','Grade 5','Grade 6','Grade 7','Grade 8','Grade 9'];
+
+    function loadProfiles() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && parsed.length > 0) return parsed;
+        }
+      } catch (e) {}
+      return JSON.parse(JSON.stringify(defaultProfiles));
+    }
+
+    function saveProfilesToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+        localStorage.setItem(STORAGE_ACTIVE, String(activeProfileId));
+      } catch (e) {}
+    }
+
+    // ===== INIT =====
+    function init() { renderProfiles(); renderServices(services); }
+
+    // ===== PROFILES =====
+    function renderProfiles() {
+      const row = document.getElementById('profilesRow');
+      row.innerHTML = profiles.map(p => `
+        <div class="profile-card ${p.id===activeProfileId?'active':''}" onclick="selectProfile(${p.id})">
+          <div class="profile-check">${p.id===activeProfileId?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div>
+          <div class="profile-emoji" style="background:${p.color}20;">${p.emoji}</div>
+          <div class="profile-name">${p.name}</div>
+          <div class="profile-grade">${p.grade}${p.age ? ' · Age ' + p.age : ''}${p.school ? ' · ' + p.school : ''}</div>
+          <div class="profile-tags">${p.interests.slice(0,3).map(t=>`<span class="tag">${t}</span>`).join('')}${p.interests.length > 3 ? `<span class="tag">+${p.interests.length - 3}</span>` : ''}${p.allergies ? '<span class="tag" style="color:var(--coral);">⚠️</span>' : ''}</div>
+          <div class="profile-actions" style="position:absolute;bottom:12px;right:12px;">
+            <button class="profile-action-btn" onclick="event.stopPropagation(); editProfile(${p.id})" title="Edit">✎</button>
+            <button class="profile-action-btn delete" onclick="event.stopPropagation(); deleteProfile(${p.id})" title="Delete">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectProfile(id) {
+      activeProfileId = id;
+      saveProfilesToStorage();
+      renderProfiles();
+      runAI();
+    }
+
+    function openProfileModal(profileId = null) {
+      editingProfileId = profileId;
+      const overlay = document.getElementById('profileModalOverlay');
+      const title = document.getElementById('profileModalTitle');
+      
+      renderEmojiGrid();
+      renderColorGrid();
+      renderInterestChips();
+      populateGradeSelect();
+      populateAgeSelect();
+
+      clearValidationErrors();
+
+      if (profileId) {
+        const profile = profiles.find(p => p.id === profileId);
+        title.textContent = 'Edit Child Profile';
+        document.getElementById('profileName').value = profile.name;
+        document.getElementById('profileAge').value = profile.age || '';
+        document.getElementById('profileDOB').value = profile.dob || '';
+        document.getElementById('profileGrade').value = profile.grade;
+        document.getElementById('profileSchool').value = profile.school || '';
+        document.getElementById('profileNotes').value = profile.notes || '';
+        document.getElementById('profileAllergies').value = profile.allergies || '';
+        document.getElementById('profileEmergencyName').value = profile.emergencyName || '';
+        document.getElementById('profileEmergencyPhone').value = profile.emergencyPhone || '';
+        selectedEmoji = profile.emoji;
+        selectedColor = profile.color;
+        selectedInterests = [...profile.interests];
+      } else {
+        title.textContent = 'Add Child Profile';
+        document.getElementById('profileName').value = '';
+        document.getElementById('profileAge').value = '';
+        document.getElementById('profileDOB').value = '';
+        document.getElementById('profileGrade').value = '';
+        document.getElementById('profileSchool').value = '';
+        document.getElementById('profileNotes').value = '';
+        document.getElementById('profileAllergies').value = '';
+        document.getElementById('profileEmergencyName').value = '';
+        document.getElementById('profileEmergencyPhone').value = '';
+        selectedEmoji = '👦';
+        selectedColor = '#6C5CE7';
+        selectedInterests = [];
+      }
+
+      refreshSelectionUI();
+      updatePreview();
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('profileName').focus(), 100);
+    }
+
+    function clearValidationErrors() {
+      document.querySelectorAll('.form-input').forEach(el => { el.classList.remove('error', 'valid'); });
+      document.querySelectorAll('.form-error').forEach(el => { el.classList.remove('show'); });
+    }
+
+    function closeProfileModal(e) {
+      if (e && e.target.id !== 'profileModalOverlay') return;
+      document.getElementById('profileModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      editingProfileId = null;
+    }
+
+    function renderEmojiGrid() {
+      const grid = document.getElementById('emojiGrid');
+      grid.innerHTML = avatarEmojis.map(e => `<button class="emoji-option" data-emoji="${e}" onclick="selectEmoji(this, '${e}')">${e}</button>`).join('');
+    }
+
+    function renderColorGrid() {
+      const grid = document.getElementById('colorGrid');
+      grid.innerHTML = accentColors.map(c => `<button class="color-option" data-color="${c}" style="background:${c};" onclick="selectColor(this, '${c}')"></button>`).join('');
+    }
+
+    function renderInterestChips() {
+      const container = document.getElementById('interestChips');
+      container.innerHTML = allInterests.map(i => `<span class="interest-chip" data-interest="${i}" onclick="toggleInterest(this, '${i}')">${i}</span>`).join('');
+    }
+
+    function populateGradeSelect() {
+      const select = document.getElementById('profileGrade');
+      select.innerHTML = '<option value="">Select grade</option>' + gradeOptions.map(g => `<option value="${g}">${g}</option>`).join('');
+    }
+
+    function populateAgeSelect() {
+      const select = document.getElementById('profileAge');
+      select.innerHTML = '<option value="">Select</option>' + Array.from({length: 12}, (_, i) => i + 3).map(a => `<option value="${a}">${a} years</option>`).join('');
+    }
+
+    function selectEmoji(btn, emoji) {
+      document.querySelectorAll('.emoji-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedEmoji = emoji;
+      updatePreview();
+    }
+
+    function selectColor(btn, color) {
+      document.querySelectorAll('.color-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedColor = color;
+      updatePreview();
+    }
+
+    function toggleInterest(chip, interest) {
+      chip.classList.toggle('selected');
+      if (selectedInterests.includes(interest)) {
+        selectedInterests = selectedInterests.filter(i => i !== interest);
+      } else {
+        selectedInterests.push(interest);
+      }
+      updatePreview();
+    }
+
+    function refreshSelectionUI() {
+      document.querySelectorAll('.emoji-option').forEach(b => { if (b.dataset.emoji === selectedEmoji) b.classList.add('selected'); });
+      document.querySelectorAll('.color-option').forEach(b => { if (b.dataset.color === selectedColor) b.classList.add('selected'); });
+      document.querySelectorAll('.interest-chip').forEach(c => { if (selectedInterests.includes(c.dataset.interest)) c.classList.add('selected'); });
+    }
+
+    function updatePreview() {
+      const name = document.getElementById('profileName').value.trim();
+      const age = document.getElementById('profileAge').value;
+      const grade = document.getElementById('profileGrade').value;
+      const school = document.getElementById('profileSchool').value.trim();
+      const allergies = document.getElementById('profileAllergies').value.trim();
+
+      document.getElementById('previewEmoji').style.background = selectedColor + '20';
+      document.getElementById('previewEmoji').textContent = selectedEmoji;
+      document.getElementById('previewName').textContent = name || "Child's Name";
+      document.getElementById('previewGrade').textContent = grade ? `${grade}${age ? ' · Age ' + age : ''}` : 'Select grade';
+      document.getElementById('previewTags').innerHTML = selectedInterests.map(i => `<span class="preview-tag">${i}</span>`).join('');
+
+      const schoolEl = document.getElementById('previewSchool');
+      if (school) { schoolEl.style.display = 'block'; schoolEl.textContent = '🏫 ' + school; }
+      else { schoolEl.style.display = 'none'; }
+
+      const allergyEl = document.getElementById('previewAllergy');
+      if (allergies) { allergyEl.style.display = 'block'; allergyEl.textContent = '⚠️ ' + allergies; }
+      else { allergyEl.style.display = 'none'; }
+
+      const metaEl = document.getElementById('previewMeta');
+      if (editingProfileId) {
+        const profile = profiles.find(p => p.id === editingProfileId);
+        if (profile && profile.createdAt) {
+          const created = new Date(profile.createdAt).toLocaleDateString();
+          const updated = new Date(profile.updatedAt).toLocaleDateString();
+          metaEl.style.display = 'block';
+          metaEl.textContent = `Created: ${created}${created !== updated ? ' · Updated: ' + updated : ''}`;
+        }
+      } else {
+        metaEl.style.display = 'none';
+      }
+
+      const isValid = name && grade && selectedInterests.length > 0;
+      document.getElementById('profileSaveBtn').disabled = !isValid;
+
+      document.getElementById('profileName').classList.toggle('error', !name && document.getElementById('profileName').value.length > 0);
+      document.getElementById('profileName').classList.toggle('valid', name.length > 0);
+      document.getElementById('gradeError').classList.toggle('show', false);
+      document.getElementById('interestError').classList.toggle('show', false);
+    }
+
+    function onDOBChange() {
+      const dob = document.getElementById('profileDOB').value;
+      if (dob) {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        if (age >= 3 && age <= 14) {
+          document.getElementById('profileAge').value = age;
+        }
+      }
+      updatePreview();
+    }
+
+    function saveProfile() {
+      const name = document.getElementById('profileName').value.trim();
+      const age = document.getElementById('profileAge').value;
+      const dob = document.getElementById('profileDOB').value;
+      const grade = document.getElementById('profileGrade').value;
+      const school = document.getElementById('profileSchool').value.trim();
+      const notes = document.getElementById('profileNotes').value.trim();
+      const allergies = document.getElementById('profileAllergies').value.trim();
+      const emergencyName = document.getElementById('profileEmergencyName').value.trim();
+      const emergencyPhone = document.getElementById('profileEmergencyPhone').value.trim();
+
+      let hasError = false;
+      if (!name) {
+        document.getElementById('profileName').classList.add('error');
+        document.getElementById('nameError').classList.add('show');
+        hasError = true;
+      }
+      if (!grade) {
+        document.getElementById('profileGrade').classList.add('error');
+        document.getElementById('gradeError').classList.add('show');
+        hasError = true;
+      }
+      if (selectedInterests.length === 0) {
+        document.getElementById('interestError').classList.add('show');
+        hasError = true;
+      }
+      if (hasError) return;
+
+      const now = new Date().toISOString();
+
+      if (editingProfileId) {
+        const idx = profiles.findIndex(p => p.id === editingProfileId);
+        profiles[idx] = {
+          ...profiles[idx],
+          name,
+          age: parseInt(age) || null,
+          dob,
+          grade,
+          emoji: selectedEmoji,
+          color: selectedColor,
+          interests: selectedInterests,
+          notes,
+          school,
+          allergies,
+          emergencyName,
+          emergencyPhone,
+          updatedAt: now
+        };
+      } else {
+        const newProfile = {
+          id: Date.now(),
+          name,
+          age: parseInt(age) || null,
+          dob,
+          grade,
+          emoji: selectedEmoji,
+          color: selectedColor,
+          interests: selectedInterests,
+          notes,
+          school,
+          allergies,
+          emergencyName,
+          emergencyPhone,
+          createdAt: now,
+          updatedAt: now
+        };
+        profiles.push(newProfile);
+        activeProfileId = newProfile.id;
+      }
+
+      saveProfilesToStorage();
+      closeProfileModal();
+      renderProfiles();
+      runAI();
+    }
+
+    function editProfile(id) { openProfileModal(id); }
+
+    function deleteProfile(id) {
+      if (profiles.length <= 1) { alert('You need at least one child profile.'); return; }
+      if (!confirm('Delete this profile?')) return;
+      profiles = profiles.filter(p => p.id !== id);
+      if (activeProfileId === id) activeProfileId = profiles[0].id;
+      saveProfilesToStorage();
+      renderProfiles();
+      runAI();
+    }
+
+    // ===== AI ENGINE =====
+    function runAI() {
+      const input = document.getElementById('aiInput').value.trim();
+      const profile = profiles.find(p => p.id === activeProfileId);
+      if (!profile) return;
+
+      const btn = document.getElementById('aiGoBtn');
+      const btnText = document.getElementById('aiBtnText');
+      const btnLoader = document.getElementById('aiBtnLoader');
+      const reasoning = document.getElementById('aiReasoning');
+
+      btn.disabled = true;
+      btnText.style.display = 'none';
+      btnLoader.style.display = 'inline-flex';
+
+      reasoning.style.display = 'block';
+      reasoning.innerHTML = `
+        <div class="ai-reasoning">
+          <div class="ai-reasoning-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
+          <div class="ai-reasoning-text">
+            <div class="ai-loading">Analyzing programs for <strong>${profile.name}</strong><div class="dots"><span></span><span></span><span></span></div></div>
+          </div>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const inputLower = input.toLowerCase();
+        let scored = services.map(s => {
+          let score = 0;
+          let reasons = [];
+
+          if (s.grades.includes(profile.grade)) { score += 40; reasons.push(`Grade ${profile.grade} eligible`); }
+          
+          const interestMatches = [];
+          profile.interests.forEach(interest => {
+            const match = s.tags.find(t => t.toLowerCase().includes(interest.toLowerCase()) || interest.toLowerCase().includes(t.toLowerCase()));
+            if (match) interestMatches.push(match);
+          });
+          if (interestMatches.length > 0) { score += 35; reasons.push(`Matches interests: ${interestMatches.join(', ')}`); }
+          
+          if (profile.notes) {
+            const notes = profile.notes.toLowerCase();
+            if ((notes.includes('weekday') || notes.includes('after school')) && (s.days.toLowerCase().includes('mon') || s.days.toLowerCase().includes('tue') || s.days.toLowerCase().includes('wed') || s.days.toLowerCase().includes('thu') || s.days.toLowerCase().includes('fri'))) { score += 15; reasons.push('Fits weekday schedule'); }
+            if ((notes.includes('weekend') || notes.includes('saturday') || notes.includes('sunday')) && (s.days.toLowerCase().includes('sat') || s.days.toLowerCase().includes('sun'))) { score += 20; reasons.push('Available on weekends'); }
+            if ((notes.includes('building') || notes.includes('lego')) && s.tags.some(t => t.toLowerCase().includes('lego'))) { score += 20; reasons.push('LEGO/Building focus'); }
+          }
+
+          if (input) {
+            if (inputLower.includes('beginner') || inputLower.includes('intro') || inputLower.includes('starting') || inputLower.includes('new')) { if (s.tags.some(t => t.toLowerCase().includes('intro') || t.toLowerCase().includes('beginner'))) { score += 20; reasons.push('Beginner-friendly'); } }
+            if (inputLower.includes('summer')) { if (s.type === 'summer-camp') { score += 25; reasons.push('Summer camp'); } }
+            if (inputLower.includes('weekend') || inputLower.includes('saturday') || inputLower.includes('sunday')) { if (s.days.toLowerCase().includes('sat') || s.days.toLowerCase().includes('sun')) { score += 20; reasons.push('Weekend schedule'); } }
+            if (inputLower.includes('weekday') || inputLower.includes('after school') || inputLower.includes('monday') || inputLower.includes('tuesday') || inputLower.includes('wednesday') || inputLower.includes('thursday') || inputLower.includes('friday')) { if (s.days.toLowerCase().includes('mon') || s.days.toLowerCase().includes('tue') || s.days.toLowerCase().includes('wed') || s.days.toLowerCase().includes('thu') || s.days.toLowerCase().includes('fri')) { score += 15; reasons.push('Weekday availability'); } }
+            if (inputLower.includes('python')) { if (s.tags.some(t => t.toLowerCase().includes('python'))) { score += 30; reasons.push('Python coding'); } }
+            if (inputLower.includes('party') || inputLower.includes('birthday') || inputLower.includes('celebration')) { if (s.type === 'party') { score += 50; reasons.push('Birthday party option'); } }
+            if (inputLower.includes('minecraft')) { if (s.tags.some(t => t.toLowerCase().includes('minecraft'))) { score += 30; reasons.push('Minecraft coding'); } }
+            if (inputLower.includes('3d') || inputLower.includes('printing')) { if (s.tags.some(t => t.toLowerCase().includes('3d printing'))) { score += 30; reasons.push('3D Printing'); } }
+            if (inputLower.includes('robot') || inputLower.includes('robotic')) { if (s.tags.some(t => t.toLowerCase().includes('robotic'))) { score += 25; reasons.push('Robotics focus'); } }
+            if (inputLower.includes('advanced') || inputLower.includes('competitive') || inputLower.includes('expert')) { if (s.tags.some(t => t.toLowerCase().includes('advanced') || t.toLowerCase().includes('competitive'))) { score += 20; reasons.push('Advanced level'); } }
+
+            const ageMatch = inputLower.match(/(\d+)\s*-?\s*(year|yr|old)/);
+            if (ageMatch) {
+              const mentionedAge = parseInt(ageMatch[1]);
+              const childAge = profile.age;
+              if (childAge && Math.abs(mentionedAge - childAge) <= 1) { score += 10; reasons.push(`Age-appropriate (age ${childAge})`); }
+            }
+
+            const gradeMatch = inputLower.match(/grade\s*(\d+)/i);
+            if (gradeMatch) {
+              const mentionedGrade = 'Grade ' + gradeMatch[1];
+              if (s.grades.includes(mentionedGrade)) { score += 15; reasons.push(`Perfect for ${mentionedGrade}`); }
+            }
+          }
+
+          if (s.type === 'program') { score += 10; if (!reasons.includes('Weekly program')) reasons.push('Weekly program'); }
+          if (s.spots > 8) { score += 5; }
+          if (s.price < 300) { score += 5; reasons.push('Budget-friendly'); }
+          if (s.spots <= 6) { reasons.push('Limited spots'); }
+
+          score += Math.random() * 3;
+          return { ...s, score: Math.min(Math.round(score), 98), aiReasons: reasons };
+        });
+
+        scored.sort((a, b) => b.score - a.score);
+        aiResults = scored.filter(s => s.score >= 20);
+
+        const top = aiResults[0];
+        const topCount = aiResults.filter(s => s.score >= 50).length;
+        const topPicks = aiResults.filter(s => s.score >= 60).slice(0, 3);
+
+        let urgencyText = '';
+        if (top.spots <= 4) urgencyText = `<span style="color:var(--coral);">🔥 Only ${top.spots} spots left — book now!</span>`;
+        else if (top.spots <= 8) urgencyText = `<span style="color:var(--warm);">⚡ ${top.spots} spots remaining — filling fast</span>`;
+        else urgencyText = `${top.spots} spots available`;
+
+        let reasonsHTML = '';
+        if (top.aiReasons && top.aiReasons.length > 0) {
+          reasonsHTML = `<ul class="ai-reasons-list">${top.aiReasons.slice(0, 4).map(r => `<li>${r}</li>`).join('')}</ul>`;
+        }
+
+        let picksHTML = '';
+        if (topPicks.length > 1) {
+          picksHTML = `<div class="ai-top-picks"><span style="font-size:12px;color:var(--text-muted);margin-right:4px;">Top picks:</span>${topPicks.map(p => `<span class="ai-pick-chip" onclick="document.getElementById('servicesGrid').querySelector('[data-id=&quot;${p.id}&quot;]')?.scrollIntoView({behavior:'smooth',block:'center'})">${p.emoji} ${p.name.split(':').pop().trim().substring(0, 25)}${p.name.length > 25 ? '...' : ''} (${p.score}%)</span>`).join('')}</div>`;
+        }
+
+        reasoning.innerHTML = `
+          <div class="ai-reasoning">
+            <div class="ai-reasoning-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
+            <div class="ai-reasoning-text" style="flex:1;">
+              For <strong>${profile.name}</strong> (${profile.grade}${profile.age ? ', Age ' + profile.age : ''}), I found <strong>${topCount} programs</strong> that are a great match. <strong>Top pick: ${top.name}</strong> at <strong>$${top.price}${top.duration ? ' / ' + top.duration : ''}</strong> (${top.score}% match). ${urgencyText}
+              ${reasonsHTML}
+              ${picksHTML}
+            </div>
+            <button onclick="clearAIResults()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text-muted);font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;" title="Clear AI results">✕ Clear</button>
+          </div>
+        `;
+
+        btn.disabled = false;
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+
+        renderServices(aiResults);
+
+        if (input) {
+          setTimeout(() => {
+            document.getElementById('aiReasoning').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
+        }
+      }, 800 + Math.random() * 600);
+    }
+
+    // ===== RENDER SERVICES =====
+    function renderServices(list) {
+      const grid = document.getElementById('servicesGrid');
+      const count = document.getElementById('resultsCount');
+      let filtered = list;
+      if (currentFilter !== 'all') { filtered = list.filter(s => s.type === currentFilter); }
+      count.textContent = `${filtered.length} results`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">🔍</div><h3>No matching programs</h3><p>Try a different filter or ask AI for suggestions</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(s => {
+        const inCart = cart.some(c => c.id === s.id);
+        const typeLabel = s.type === 'summer-camp' ? 'Summer Camp' : s.type === 'program' ? 'Program' : 'Party';
+        const typeClass = s.type === 'summer-camp' ? 'type-camp' : s.type === 'program' ? 'type-program' : 'type-party';
+        return `
+          <div class="service-card" data-id="${s.id}">
+            <div class="service-header">
+              <span class="service-type ${typeClass}">${typeLabel}</span>
+              ${s.score ? `<span class="match-badge">${s.score}% Match</span>` : ''}
+            </div>
+            <div class="service-body">
+              <div class="service-name">${s.emoji} ${s.name}</div>
+              <div class="service-details">
+                <div class="detail-row"><span class="icon">📅</span> ${s.dates}</div>
+                <div class="detail-row"><span class="icon">📆</span> ${s.days}${s.time ? ' · ' + s.time : ''}</div>
+                <div class="detail-row"><span class="icon">🎓</span> ${s.grades.slice(0,3).join(', ')}${s.grades.length > 3 ? '...' : ''}</div>
+                <div class="detail-row"><span class="icon">👥</span> ${s.spots} spots available</div>
+              </div>
+            </div>
+            <div class="service-footer">
+              <div class="service-price">$${s.price} ${s.duration ? `<span class="period">/ ${s.duration}</span>` : ''}</div>
+              <button class="add-btn ${inCart?'added':''}" onclick="event.stopPropagation(); toggleCart('${s.id}')">${inCart ? '✓ Added' : 'Enroll'}</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ===== FILTERS =====
+    function setFilter(btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderServices(aiResults || services);
+    }
+
+    // ===== AI INPUT =====
+    function useChip(chip) {
+      document.getElementById('aiInput').value = chip.textContent;
+      runAI();
+    }
+
+    function clearAIResults() {
+      document.getElementById('aiInput').value = '';
+      document.getElementById('aiReasoning').style.display = 'none';
+      aiResults = null;
+      currentFilter = 'all';
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+      renderServices(services);
+    }
+
+    // ===== CART =====
+    let enrollServiceId = null;
+    let enrollSelectedProfileIds = [];
+    let enrollSelectedDate = '';
+    let enrollSelectedTime = '';
+
+    function toggleCart(id) {
+      const existing = cart.find(c => c.serviceId === id && c.profileId === activeProfileId);
+      if (existing) {
+        cart = cart.filter(c => c.cartId !== existing.cartId);
+      } else {
+        openEnrollModal(id);
+        return;
+      }
+      updateCartUI();
+      renderServices(aiResults || services);
+    }
+
+    function openEnrollModal(serviceId) {
+      enrollServiceId = serviceId;
+      enrollSelectedProfileIds = [];
+      enrollSelectedDate = '';
+      enrollSelectedTime = '';
+
+      const service = services.find(s => s.id === serviceId);
+      if (!service) return;
+
+      document.getElementById('enrollModalTitle').textContent = `Enroll: ${service.name}`;
+      document.getElementById('enrollProgramInfo').innerHTML = `
+        <div class="name">${service.emoji} ${service.name}</div>
+        <div class="meta">
+          <span>💰 $${service.price}${service.duration ? ' / ' + service.duration : ''}</span>
+          <span>📅 ${service.dates}</span>
+          <span>📆 ${service.days} · ${service.time || 'Full Day'}</span>
+          <span>👥 ${service.spots} spots</span>
+        </div>
+      `;
+
+      const childSelectHTML = `
+        <h4>Select Child${profiles.length > 1 ? 'ren' : ''} (${profiles.length > 1 ? 'can select multiple' : ''})</h4>
+        ${profiles.map(p => `
+          <div class="enroll-child-option" data-profile-id="${p.id}" onclick="toggleEnrollChild(this, ${p.id})">
+            <div class="emoji" style="background:${p.color}20;">${p.emoji}</div>
+            <div class="info">
+              <div class="name">${p.name}</div>
+              <div class="detail">${p.grade}${p.age ? ' · Age ' + p.age : ''}${p.school ? ' · ' + p.school : ''}</div>
+            </div>
+            <div class="check">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+        `).join('')}
+      `;
+      document.getElementById('enrollChildSelect').innerHTML = childSelectHTML;
+
+      const scheduleSection = document.getElementById('enrollScheduleSection');
+      if (service.type === 'summer-camp') {
+        scheduleSection.style.display = 'block';
+        const camps = services.filter(s => s.name === service.name);
+        document.getElementById('enrollScheduleContent').innerHTML = `
+          <div class="enroll-dates-row">
+            ${camps.map(c => `
+              <div class="enroll-date-chip ${c.id === service.id ? 'selected' : ''}" data-date="${c.dates}" data-service-id="${c.id}" onclick="selectEnrollDate(this, '${c.id}', '${c.dates}')">
+                <div class="dates">${c.dates}</div>
+                <div class="price">$${c.price} · ${c.duration}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="enroll-times-row">
+            <div class="enroll-time-chip selected" data-time="${service.time || 'Full Day'}" data-days="${service.days}" onclick="selectEnrollTime(this)">
+              <div class="time">${service.time || 'Full Day'}</div>
+              <div class="day">${service.days}</div>
+              <div class="spots">${service.spots} spots left</div>
+            </div>
+          </div>
+        `;
+        enrollSelectedDate = service.dates;
+        enrollSelectedTime = service.time || 'Full Day';
+      } else if (service.type === 'program') {
+        scheduleSection.style.display = 'block';
+        const timeSlots = service.time.includes('&') ? service.time.split('&').map(t => t.trim()) : [service.time || 'Full Day'];
+        document.getElementById('enrollScheduleContent').innerHTML = `
+          <div class="enroll-dates-row">
+            <div class="enroll-date-chip selected">
+              <div class="dates">${service.dates}</div>
+              <div class="price">$${service.price} · ${service.duration}</div>
+            </div>
+          </div>
+          <div class="enroll-times-row">
+            ${timeSlots.map((t, i) => `
+              <div class="enroll-time-chip ${i === 0 ? 'selected' : ''}" data-time="${t}" data-days="${service.days}" onclick="selectEnrollTime(this)">
+                <div class="time">${t}</div>
+                <div class="day">${service.days}</div>
+                <div class="spots">${service.spots} spots left</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        enrollSelectedDate = service.dates;
+        enrollSelectedTime = timeSlots[0];
+      } else {
+        scheduleSection.style.display = 'none';
+        enrollSelectedDate = service.dates;
+        enrollSelectedTime = service.time || 'Full Day';
+      }
+
+      updateEnrollConfirmBtn();
+      document.getElementById('enrollModalOverlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function toggleEnrollChild(el, profileId) {
+      el.classList.toggle('selected');
+      if (enrollSelectedProfileIds.includes(profileId)) {
+        enrollSelectedProfileIds = enrollSelectedProfileIds.filter(id => id !== profileId);
+      } else {
+        enrollSelectedProfileIds.push(profileId);
+      }
+      updateEnrollConfirmBtn();
+    }
+
+    function selectEnrollDate(el, serviceId, dates) {
+      document.querySelectorAll('.enroll-date-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      enrollServiceId = serviceId;
+      enrollSelectedDate = dates;
+      const service = services.find(s => s.id === serviceId);
+      if (service) {
+        enrollSelectedTime = service.time || 'Full Day';
+      }
+    }
+
+    function selectEnrollTime(el) {
+      document.querySelectorAll('.enroll-time-chip').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      enrollSelectedTime = el.dataset.time;
+    }
+
+    function updateEnrollConfirmBtn() {
+      const btn = document.getElementById('enrollConfirmBtn');
+      btn.disabled = enrollSelectedProfileIds.length === 0;
+      btn.textContent = enrollSelectedProfileIds.length > 1
+        ? `Enroll ${enrollSelectedProfileIds.length} Children →`
+        : 'Enroll Now →';
+    }
+
+    function confirmEnrollment() {
+      if (enrollSelectedProfileIds.length === 0) return;
+
+      const service = services.find(s => s.id === enrollServiceId);
+      if (!service) return;
+
+      enrollSelectedProfileIds.forEach(profileId => {
+        const profile = profiles.find(p => p.id === profileId);
+        if (!profile) return;
+
+        const cartId = `${service.id}-${profileId}-${Date.now()}-${Math.random()}`;
+        cart.push({
+          cartId,
+          serviceId: service.id,
+          id: service.id,
+          type: service.type,
+          name: service.name,
+          price: service.price,
+          duration: service.duration,
+          dates: enrollSelectedDate,
+          days: service.days,
+          time: enrollSelectedTime,
+          spots: service.spots,
+          emoji: service.emoji,
+          tags: service.tags,
+          grades: service.grades,
+          profileId: profile.id,
+          profileName: profile.name,
+          profileGrade: profile.grade,
+          profileEmoji: profile.emoji,
+          profileColor: profile.color
+        });
+      });
+
+      closeEnrollModal();
+      updateCartUI();
+      renderServices(aiResults || services);
+    }
+
+    function closeEnrollModal(e) {
+      if (e && e.target.id !== 'enrollModalOverlay') return;
+      document.getElementById('enrollModalOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+      enrollServiceId = null;
+      enrollSelectedProfileIds = [];
+    }
+
+    function addToCartById(id) {
+      openEnrollModal(id);
+    }
+
+    function removeFromCart(cartId) {
+      cart = cart.filter(c => c.cartId !== cartId);
+      updateCartUI();
+      renderServices(aiResults || services);
+    }
+
+    function updateScheduleForItem(cartId, dates, time) {
+      const item = cart.find(c => c.cartId === cartId);
+      if (item) {
+        item.dates = dates;
+        item.time = time;
+        updateCartUI();
+      }
+    }
+
+    function changeProfileForItem(cartId, newProfileId) {
+      const item = cart.find(c => c.cartId === cartId);
+      if (item) {
+        const profile = profiles.find(p => p.id === parseInt(newProfileId));
+        if (profile) {
+          item.profileId = profile.id;
+          item.profileName = profile.name;
+          item.profileGrade = profile.grade;
+          item.profileEmoji = profile.emoji;
+          item.profileColor = profile.color;
+          updateCartUI();
+        }
+      }
+    }
+
+    function enrollSiblingInSameProgram(serviceId, profileId) {
+      const service = services.find(s => s.id === serviceId);
+      const profile = profiles.find(p => p.id === profileId);
+      if (!service || !profile) return;
+
+      const cartId = `${service.id}-${profileId}-${Date.now()}-${Math.random()}`;
+      cart.push({
+        cartId,
+        serviceId: service.id,
+        id: service.id,
+        type: service.type,
+        name: service.name,
+        price: service.price,
+        duration: service.duration,
+        dates: service.dates,
+        days: service.days,
+        time: service.time || 'Full Day',
+        spots: service.spots,
+        emoji: service.emoji,
+        tags: service.tags,
+        grades: service.grades,
+        profileId: profile.id,
+        profileName: profile.name,
+        profileGrade: profile.grade,
+        profileEmoji: profile.emoji,
+        profileColor: profile.color
+      });
+
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCount').textContent = cart.length;
+      const itemsEl = document.getElementById('cartItems');
+      const summaryEl = document.getElementById('cartSummary');
+      const totalEl = document.getElementById('totalAmount');
+      const discountEl = document.getElementById('discountRow');
+      const siblingBlock = document.getElementById('siblingBlock');
+
+      if (cart.length === 0) {
+        itemsEl.innerHTML = `<div class="empty-state"><div class="icon">🛒</div><h3>Your cart is empty</h3><p>Browse programs and add them to get started</p></div>`;
+        summaryEl.innerHTML = '<p style="font-size:13px;color:var(--text-dim);">No items yet</p>';
+        totalEl.textContent = '$0';
+        discountEl.style.display = 'none';
+        siblingBlock.style.display = 'none';
+        return;
+      }
+
+      const groupedByService = {};
+      cart.forEach(item => {
+        if (!groupedByService[item.serviceId]) groupedByService[item.serviceId] = [];
+        groupedByService[item.serviceId].push(item);
+      });
+
+      let itemsHTML = '';
+      cart.forEach(item => {
+        const serviceGroup = groupedByService[item.serviceId];
+        const isSibling = serviceGroup.length > 1;
+
+        itemsHTML += `
+          <div class="cart-item-card">
+            <div class="cart-item-head">
+              <div>
+                <div class="cart-item-title">${item.emoji} ${item.name}</div>
+                <div class="cart-item-profile">
+                  <span class="dot" style="background:${item.profileColor};"></span>
+                  ${item.profileEmoji} ${item.profileName} · ${item.profileGrade}
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="cart-item-price-tag">$${item.price}</div>
+                <button class="cart-remove" onclick="removeFromCart('${item.cartId}')">Remove</button>
+              </div>
+            </div>
+            <div class="schedule-section">
+              <h4>📅 Schedule</h4>
+              <div class="schedule-dates">
+                <div class="schedule-date-chip selected">
+                  <div class="dates">${item.dates}</div>
+                  <div class="price">${item.duration}</div>
+                </div>
+              </div>
+              <div class="schedule-times">
+                <div class="schedule-time-chip selected">
+                  <div class="time">${item.time}</div>
+                  <div class="day">${item.days}</div>
+                  <div class="spots">${item.spots} spots left</div>
+                </div>
+              </div>
+            </div>
+            ${profiles.length > 1 ? `
+            <div class="child-assign-row">
+              <span class="emoji">${item.profileEmoji}</span>
+              <span class="name">Assigned to:</span>
+              <select class="child-assign-select" onchange="changeProfileForItem('${item.cartId}', this.value)">
+                ${profiles.map(p => `<option value="${p.id}" ${p.id === item.profileId ? 'selected' : ''}>${p.emoji} ${p.name} (${p.grade})</option>`).join('')}
+              </select>
+            </div>
+            ` : ''}
+            ${isSibling ? '<div style="margin-top:8px;font-size:12px;color:var(--warm);">👫 Sibling enrolled in same program — 10% discount applied</div>' : ''}
+          </div>
+        `;
+      });
+      itemsEl.innerHTML = itemsHTML;
+
+      summaryEl.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-item-head">
+            <span class="cart-item-name">${item.profileEmoji} ${item.name}</span>
+            <span class="cart-item-price">$${item.price}</span>
+          </div>
+          <div class="cart-item-detail">${item.profileName} · ${item.dates}</div>
+        </div>
+      `).join('');
+
+      const profileIds = [...new Set(cart.map(c => c.profileId))];
+      const hasSiblings = profileIds.length > 1;
+
+      if (hasSiblings) {
+        const subtotal = cart.reduce((sum, c) => sum + c.price, 0);
+        const discount = Math.round(subtotal * 0.10);
+        discountEl.style.display = 'block';
+        discountEl.innerHTML = `<div class="discount-row">🎉 Sibling Discount (10%) <span class="amount">-$${discount}</span></div>`;
+        totalEl.textContent = `$${subtotal - discount}`;
+
+        siblingBlock.style.display = 'block';
+        let siblingStatusHTML = '';
+
+        Object.entries(groupedByService).forEach(([serviceId, items]) => {
+          const service = services.find(s => s.id === serviceId);
+          if (!service || items.length < 2) return;
+
+          const enrolledProfiles = items.map(i => i.profileId);
+          siblingStatusHTML += `
+            <div style="margin-bottom:12px;">
+              <div style="font-size:13px;font-weight:600;margin-bottom:6px;">${service.emoji} ${service.name}</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                ${items.map(item => `
+                  <div class="sibling-child-row">
+                    <span class="emoji">${item.profileEmoji}</span>
+                    <div class="info">
+                      <div class="name">${item.profileName}</div>
+                      <div class="grade">${item.profileGrade} · ${item.dates}</div>
+                    </div>
+                    <span class="status enrolled">✓ Enrolled</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        });
+
+        const enrolledProfileIds = [...new Set(cart.map(c => c.profileId))];
+        const unenrolledProfiles = profiles.filter(p => !enrolledProfileIds.includes(p.id));
+
+        if (unenrolledProfiles.length > 0) {
+          const siblingPrograms = {};
+          Object.entries(groupedByService).forEach(([serviceId, items]) => {
+            if (items.length >= 2) {
+              const service = services.find(s => s.id === serviceId);
+              if (service) siblingPrograms[serviceId] = service;
+            }
+          });
+
+          if (Object.keys(siblingPrograms).length > 0) {
+            let enrollSectionHTML = '';
+            unenrolledProfiles.forEach(profile => {
+              Object.entries(siblingPrograms).forEach(([serviceId, service]) => {
+                if (service.grades.includes(profile.grade)) {
+                  enrollSectionHTML += `
+                    <div class="sibling-child-row">
+                      <span class="emoji">${profile.emoji}</span>
+                      <div class="info">
+                        <div class="name">${profile.name}</div>
+                        <div class="grade">${profile.grade} — eligible for ${service.name}</div>
+                      </div>
+                      <button class="add-btn" onclick="enrollSiblingInSameProgram('${serviceId}', ${profile.id})" style="padding:6px 14px;font-size:12px;">+ Enroll</button>
+                    </div>
+                  `;
+                }
+              });
+            });
+
+            if (enrollSectionHTML) {
+              document.getElementById('siblingEnrollSection').style.display = 'block';
+              document.getElementById('siblingEnrollList').innerHTML = enrollSectionHTML;
+            }
+          }
+        } else {
+          document.getElementById('siblingEnrollSection').style.display = 'none';
+        }
+
+        siblingStatusHTML += `<div style="margin-top:12px;padding:10px;background:rgba(0,184,148,0.1);border-radius:8px;font-size:13px;color:var(--success);">🎉 ${profileIds.length} children enrolled — 10% sibling discount applied!</div>`;
+        document.getElementById('siblingStatus').innerHTML = siblingStatusHTML;
+      } else {
+        discountEl.style.display = 'none';
+        siblingBlock.style.display = 'none';
+        totalEl.textContent = `$${cart.reduce((sum, c) => sum + c.price, 0)}`;
+      }
+    }
+
+    // ===== MODAL =====
+    function openModal() { document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeModal(e) { if (!e || e.target.id === 'modalOverlay') { document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow = ''; } }
+    function pickCompare(card) { document.querySelectorAll('.compare-card').forEach(c => c.classList.remove('picked')); card.classList.add('picked'); }
+
+    // ===== NAV =====
+    function showScreen(name) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(name).classList.add('active');
+      document.querySelector(`.nav-tab[data-screen="${name}"]`).classList.add('active');
+      window.scrollTo(0, 0);
+      if (name === 'registration') updateCartUI();
+    }
+
+    document.querySelectorAll('.nav-tab').forEach(tab => { tab.addEventListener('click', () => showScreen(tab.dataset.screen)); });
+
+    // ===== CHECKOUT =====
+    function checkout() {
+      if (cart.length === 0) { alert('Add programs to your cart first!'); return; }
+      const subtotal = cart.reduce((sum, c) => sum + c.price, 0);
+      const profileIds = [...new Set(cart.map(c => c.profileId))];
+      const discount = profileIds.length > 1 ? Math.round(subtotal * 0.10) : 0;
+      const total = subtotal - discount;
+
+      const grouped = {};
+      cart.forEach(c => {
+        if (!grouped[c.profileName]) grouped[c.profileName] = [];
+        grouped[c.profileName].push(c);
+      });
+
+      let summary = Object.entries(grouped).map(([name, items]) => {
+        return `${name}:\n${items.map(i => `  • ${i.name} — ${i.dates} (${i.time}) — $${i.price}`).join('\n')}`;
+      }).join('\n\n');
+
+      alert(`Checkout: $${total}\n\n${summary}${discount > 0 ? `\n\nSibling discount (10%): -$${discount}` : ''}\n\nThis is a demo. In production, this redirects to Omnify's payment flow.`);
+    }
+
+    // ===== INIT =====
+    init(); runAI();
+  </script>
+</body>
+</html>
